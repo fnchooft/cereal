@@ -31,6 +31,7 @@
 
 #include <type_traits>
 #include <string>
+#include <sstream>
 #include <memory>
 #include <unordered_map>
 #include <unordered_set>
@@ -648,7 +649,11 @@ namespace cereal
 
         auto iter = itsSharedPointerMap.find( id );
         if(iter == itsSharedPointerMap.end())
-          throw Exception("Error while trying to deserialize a smart pointer. Could not find id " + std::to_string(id));
+        {
+          std::ostringstream error;
+          error << "Error while trying to deserialize a smart pointer. Could not find id " << id;
+          throw Exception(error.str());
+        }
 
         return iter->second;
       }
@@ -676,7 +681,9 @@ namespace cereal
         auto name = itsPolymorphicTypeMap.find( id );
         if(name == itsPolymorphicTypeMap.end())
         {
-          throw Exception("Error while trying to deserialize a polymorphic pointer. Could not find type id " + std::to_string(id));
+          std::ostringstream error;
+          error << "Error while trying to deserialize a polymorphic pointer. Could not find type id " << id;
+          throw Exception(error.str());
         }
         return name->second;
       }
